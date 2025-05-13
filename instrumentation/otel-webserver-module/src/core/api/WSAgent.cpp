@@ -185,6 +185,8 @@ WSAgent::addWSContextToCore(
         return -1;
     }
 
+    apiFuncTraceError(serviceNamespace.c_str(), OTEL_STATUS(cannot_add_ws_context_to_core));
+
     if (serviceName.empty())
     {
         apiFuncTraceError("Invalid serviceName", OTEL_STATUS(cannot_add_ws_context_to_core));

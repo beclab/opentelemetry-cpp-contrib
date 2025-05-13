@@ -136,6 +136,7 @@ typedef struct{
 /* Function prototypes */
 static void *ngx_http_opentelemetry_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_opentelemetry_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
+static ngx_int_t ngx_http_opentelemetry_preconfiguration(ngx_conf_t *cf);
 static ngx_int_t ngx_http_opentelemetry_init(ngx_conf_t *cf);
 static ngx_int_t ngx_http_opentelemetry_init_worker(ngx_cycle_t *cycle);
 static void ngx_http_opentelemetry_exit_worker(ngx_cycle_t *cycle);
@@ -152,7 +153,7 @@ static void otel_payload_decorator(ngx_http_request_t* r, OTEL_SDK_ENV_RECORD* p
 static ngx_flag_t otel_requestHasErrors(ngx_http_request_t* r);
 static ngx_uint_t otel_getErrorCode(ngx_http_request_t* r);
 static char* ngx_otel_context_set(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-static void ngx_otel_set_global_context(ngx_http_opentelemetry_loc_conf_t * prev);
+static void ngx_otel_set_global_context(ngx_conf_t *cf, ngx_http_opentelemetry_loc_conf_t * prev);
 static void removeUnwantedHeader(ngx_http_request_t* r);
 /*
     Module specific handler

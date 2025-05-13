@@ -382,7 +382,7 @@ static ngx_command_t ngx_http_opentelemetry_commands[] = {
 
 /* The module context. */
 static ngx_http_module_t ngx_http_opentelemetry_module_ctx = {
-    NULL,						/* preconfiguration */
+    ngx_http_opentelemetry_preconfiguration,						/* preconfiguration */
     ngx_http_opentelemetry_init,	                        /* postconfiguration */
 
     NULL,	                                        /* create main configuration */
@@ -410,6 +410,16 @@ ngx_module_t ngx_http_opentelemetry_module = {
     NULL, 								/* exit master */
     NGX_MODULE_V1_PADDING
 };
+
+static ngx_int_t ngx_http_opentelemetry_preconfiguration(ngx_conf_t *cf)
+{
+    c_count = 0;
+    isGlobalContextSet = 0;
+
+    ngx_writeError(cf->cycle->log, __func__, "Reset Opentelemetry Module configuration");
+
+    return NGX_OK;
+}
 
 /*
 	Create loc conf to be used by the module
@@ -445,7 +455,8 @@ static char* ngx_http_opentelemetry_merge_loc_conf(ngx_conf_t *cf, void *parent,
 {
     ngx_http_opentelemetry_loc_conf_t *prev = parent;
     ngx_http_opentelemetry_loc_conf_t *conf = child;
-    ngx_otel_set_global_context(prev);
+    
+    ngx_otel_set_global_context(cf, prev);
 
     ngx_conf_merge_value(conf->nginxModuleEnabled, prev->nginxModuleEnabled, 1);
     ngx_conf_merge_value(conf->nginxModuleReportAllInstrumentedModules, prev->nginxModuleReportAllInstrumentedModules, 0);
@@ -681,10 +692,13 @@ static char* ngx_otel_context_set(ngx_conf_t *cf, ngx_command_t *cmd, void *conf
 
     return NGX_CONF_OK;
 }
-static void ngx_otel_set_global_context(ngx_http_opentelemetry_loc_conf_t * prev)
+static void ngx_otel_set_global_context(ngx_conf_t *cf, ngx_http_opentelemetry_loc_conf_t * prev)
 {
     if(isGlobalContextSet==0){
+
       if((prev->nginxModuleServiceName).data != NULL && (prev->nginxModuleServiceNamespace).data != NULL && (prev->nginxModuleServiceInstanceId).data != NULL){
+            ngx_writeError(cf->cycle->log, __func__, "Set global context, %s, %s, %s", 
+            (prev->nginxModuleServiceNamespace).data, (prev->nginxModuleServiceName).data);
         isGlobalContextSet = 1;
         contexts[c_count].sNamespace = prev->nginxModuleServiceNamespace;
         contexts[c_count].sName = prev->nginxModuleServiceName;
@@ -914,10 +928,10 @@ static ngx_flag_t ngx_initialize_opentelemetry(ngx_http_request_t *r)
 
         initDependency();
 
-        struct cNode *cn = ngx_pcalloc(r->pool, sizeof(struct cNode));
+        struct cNode *cn = NULL; //ngx_pcalloc(r->pool, sizeof(struct cNode));
         // (cn->cInfo).cName = computeContextName(r, conf);
         struct cNode *rootCN = NULL;
-        cn = NULL;
+        // cn = NULL;
 
 
         // Update the apr_pcalloc if we add another parameter to the input array!
@@ -1036,6 +1050,9 @@ static ngx_flag_t ngx_initialize_opentelemetry(ngx_http_request_t *r)
             (temp_cn->cInfo).sNamespace = (const char*)(contexts[context_i].sNamespace).data;
             (temp_cn->cInfo).sName = (const char*)(contexts[context_i].sName).data;
             (temp_cn->cInfo).sInstanceId = (const char*)(contexts[context_i].sInstanceId).data;
+
+            ngx_writeTrace(r->connection->log, __func__, "Adding context: %s - %s", name, (temp_cn->cInfo).sName);
+
             if(context_i==0)
             {
               cn = temp_cn;

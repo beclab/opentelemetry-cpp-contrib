@@ -1,0 +1,29 @@
+
+############################
+# STEP 1 download the webserver agent 
+############################
+FROM alpine:latest as agent
+
+ARG version
+
+RUN mkdir /opt/opentelemetry
+WORKDIR /opt/opentelemetry
+
+RUN mkdir agent
+# COPY opentelemetry-webserver-sdk-x64-linux.tgz opentelemetry-webserver-sdk-x64-linux.tgz
+# RUN tar -zxvf opentelemetry-webserver-sdk-x64-linux.tgz -C agent
+
+COPY opentelemetry-webserver-sdk-aarch64-linux.tgz opentelemetry-webserver-sdk-aarch64-linux.tgz
+RUN tar -zxvf opentelemetry-webserver-sdk-aarch64-linux.tgz -C agent
+
+############################
+# STEP 2 download the webserver agent 
+############################
+FROM alpine:latest
+
+COPY --from=agent /opt/opentelemetry/agent/opentelemetry-webserver-sdk /opt/opentelemetry
+
+RUN chmod 775 -R /opt/opentelemetry/
+RUN chmod a+w /opt/opentelemetry/logs
+
+CMD ["cat", "Just delivering the Opentelemetry Apache/Nginx agent"]

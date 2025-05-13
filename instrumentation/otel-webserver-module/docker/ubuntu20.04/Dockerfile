@@ -57,7 +57,7 @@ RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VER
     -DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
     -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF \
     ../.. \
-  && make -j2 \
+  && make -j6 \
   && make install \
   && cd ../../..
 
@@ -159,7 +159,7 @@ RUN apt-get install apache2 -y && a2enmod proxy && a2enmod proxy_http \
     && a2enmod proxy_balancer && a2enmod dav
 
 #Build and install boost
-RUN wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/${BOOST_FILENAME}.tar.gz \
+RUN wget https://archives.boost.io/release/${BOOST_VERSION}/source/${BOOST_FILENAME}.tar.gz \
     && tar -xvf ${BOOST_FILENAME}.tar.gz \
     && cd ${BOOST_FILENAME} \
     && ./bootstrap.sh --with-libraries=filesystem,system --prefix=/dependencies/boost/${BOOST_VERSION}/ \
@@ -201,7 +201,7 @@ RUN cp -r /dependencies /otel-webserver-module/ \
     && ./gradlew assembleWebServerModule -DtargetSystem=ubuntu
 
 RUN cd /otel-webserver-module/build \
-    && tar -xf opentelemetry-webserver-sdk-x64-linux.tgz \
+    && tar -xf opentelemetry-webserver-sdk-*-linux.tgz \
     && mv -f opentelemetry-webserver-sdk /opt/ \
     && cd ../ \
     && cp opentelemetry_module.conf /etc/apache2/opentelemetry_module.conf \
