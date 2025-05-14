@@ -17,6 +17,7 @@ RUN apt-get install -qq -y --ignore-missing \
 	unzip			                        \
 	wget			                        \
     cmake                                   
+RUN if [[ $(arch) == "x86_64" ]]; then apt install -y g++-multilib; else apt install -y g++-multilib-arm-linux-gnueabi; fi
 
 RUN apt-get install -y \
     lcov    \
