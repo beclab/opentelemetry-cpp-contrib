@@ -26,8 +26,8 @@ namespace sdkwrapper {
 
 namespace {
 
-constexpr const char* TRACEPARENT_HEADER_NAME = "traceparent";
-constexpr const char* TRACESTATE_HEADER_NAME = "tracestate";
+constexpr const char* TRACEPARENT_HEADER_NAME = "Traceparent";
+constexpr const char* TRACESTATE_HEADER_NAME = "Tracestate";
 
 } // anyonymous
 

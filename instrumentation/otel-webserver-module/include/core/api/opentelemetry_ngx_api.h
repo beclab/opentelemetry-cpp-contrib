@@ -25,8 +25,8 @@
 extern "C" {
 #endif
 
-const char* httpHeaders[] = {"traceparent", "tracestate"};
-const size_t headers_len = sizeof(httpHeaders)/sizeof(httpHeaders[0]);
+const char* httpHeaders[] = {"Traceparent", "Tracestate"};
+const size_t headers_len = 2;
 
 typedef struct{
     char* name;

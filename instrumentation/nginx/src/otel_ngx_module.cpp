@@ -767,8 +767,8 @@ std::vector<HeaderPropagation> B3PropagationVars() {
 
 std::vector<HeaderPropagation> OtelPropagationVars() {
   return {
-    {"proxy_set_header", "traceparent", "$opentelemetry_context_traceparent"},
-    {"proxy_set_header", "tracestate", "$opentelemetry_context_tracestate"},
+    {"proxy_set_header", "Traceparent", "$opentelemetry_context_traceparent"},
+    {"proxy_set_header", "Tracestate", "$opentelemetry_context_tracestate"},
     {"fastcgi_param", "HTTP_TRACEPARENT", "$opentelemetry_context_traceparent"},
     {"fastcgi_param", "HTTP_TRACESTATE", "$opentelemetry_context_tracestate"},
   };

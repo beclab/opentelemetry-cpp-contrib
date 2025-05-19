@@ -40,8 +40,8 @@ std::string ApacheHooks::m_aggregatorCommDir = "";
 bool ApacheHooks::m_reportAllStages = false;
 const std::initializer_list<const char*> ApacheHooks::httpHeaders = {
     "baggage",
-    "traceparent",
-    "tracestate"
+    "Traceparent",
+    "Tracestate"
 };
 const char* ApacheHooks::OTEL_CONFIG_KEY = "otel_configuration";
 const char* ApacheHooks::OTEL_CORRELATION_HEADER_KEY = "singularityheader";

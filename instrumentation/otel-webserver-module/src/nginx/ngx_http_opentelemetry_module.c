@@ -771,16 +771,19 @@ static void otel_payload_decorator(ngx_http_request_t* r, OTEL_SDK_ENV_RECORD* p
    ngx_http_core_main_conf_t  *cmcf;
    ngx_uint_t       nelts;
 
-   part = &r->headers_in.headers.part;
-   header = (ngx_table_elt_t*)part->elts;
-   nelts = part->nelts;
+   ngx_writeTrace(r->connection->log, __func__, "start decorating headers");
 
    for(int i=0; i<count; i++){
+        if ( strlen(propagationHeaders[i].value) == 0) continue;
+
+        part = &r->headers_in.headers.part;
+        header = (ngx_table_elt_t*)part->elts;
+        nelts = part->nelts;
 
        int header_found=0;
        for(ngx_uint_t j = 0; j<nelts; j++){
            h = &header[j];
-           if(strcmp(httpHeaders[i], h->key.data)==0){
+           if(strcmp(propagationHeaders[i].name, h->key.data)==0){
                
                header_found=1;
 
